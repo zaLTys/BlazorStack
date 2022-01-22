@@ -1,6 +1,7 @@
 ﻿@page "/build"
 @inject IPointService PointService
 @inject IUnitService UnitService
+@inject IToastService ToastService
 
 <h3>Build</h3>
 
@@ -28,11 +29,12 @@
 
     public void BuildUnit()
     {
-        var selectedUnit = UnitService.Units.FirstOrDefault(x => x.Id == selectedUnitId);
+        var selectedUnit = UnitService.Units.First(x => x.Id == selectedUnitId);
 
         if(PointService.Points < selectedUnit.PointCost)
         {
             needMorePoints = true;
+            ToastService.ShowError("Not enough points", "QQ");
             return;
         }
 
