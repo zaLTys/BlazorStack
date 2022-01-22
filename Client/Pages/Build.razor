@@ -1,0 +1,13 @@
+﻿@page "/build"
+@inject IPointService PointService
+
+<h3>Build</h3>
+
+<button class="btn btn-primary" @onclick="() => SpendPoints(10)">Spend Points</button>
+
+@code {
+    private void SpendPoints(int amount)
+    {
+        PointService.SpendPoints(amount);
+    }
+}

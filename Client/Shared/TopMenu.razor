@@ -1,0 +1,21 @@
+﻿@inject IPointService PointService
+@implements IDisposable
+<div class="top-menu"> 
+   <span class="popover-header">Points: @PointService.Points</span>
+   <AddPoints />
+</div>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        //subscribe
+        PointService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        //unsubscribe
+        PointService.OnChange -= StateHasChanged;
+    }
+}
