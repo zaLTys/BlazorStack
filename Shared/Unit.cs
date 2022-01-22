@@ -1,4 +1,4 @@
-﻿namespace BlazorStack.Server
+﻿namespace BlazorStack.Shared
 {
     public class Unit
     {
