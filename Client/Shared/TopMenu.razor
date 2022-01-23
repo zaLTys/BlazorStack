@@ -1,10 +1,20 @@
 ﻿@inject IPointService PointService
 @implements IDisposable
-<div class="top-menu"> 
-   <span class="popover-header">Points: @PointService.Points</span>
-   <AddPoints />
-</div>
 
+<AuthorizeView>
+    <Authorized>
+    <div class="top-menu">
+        <span class="popover-header">Points: @PointService.Points</span>
+        <AddPoints />
+    </div>
+    </Authorized>
+    <NotAuthorized>
+        <div>
+            <NavLink href="login">Login</NavLink>
+            <NavLink href="register">Register</NavLink>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     protected override void OnInitialized()
