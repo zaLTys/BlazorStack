@@ -1,6 +1,6 @@
 ﻿namespace BlazorStack.Shared
 {
-    public class Unit
+    public class UnitModel
     {
         public int Id { get; set; }
         public string Title { get; set; } = "";

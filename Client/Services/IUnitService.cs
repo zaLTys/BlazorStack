@@ -4,8 +4,8 @@ namespace BlazorStack.Client.Services
 {
     public interface IUnitService
     {
-        IList<Unit> Units { get;}
-        IList<UserUnit> MyUnits { get; set; }
+        IList<UnitModel> Units { get;}
+        IList<UserUnitModel> MyUnits { get; set; }
 
         void AddUnit(int unitId);
     }
