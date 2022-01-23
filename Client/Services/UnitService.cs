@@ -1,5 +1,7 @@
 ﻿using Blazored.Toast.Services;
 using BlazorStack.Shared;
+using BlazorStack.Shared.Entities;
+using BlazorStack.Shared.Models;
 using System.Net.Http.Json;
 
 namespace BlazorStack.Client.Services

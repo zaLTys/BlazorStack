@@ -1,4 +1,6 @@
 ﻿using BlazorStack.Shared;
+using BlazorStack.Shared.Entities;
+using BlazorStack.Shared.Models;
 
 namespace BlazorStack.Client.Services
 {
