@@ -28,6 +28,11 @@
     int selectedUnitId = 1;
     bool needMorePoints = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await UnitService.LoadUnitsAsync();
+    }
+
     public void BuildUnit()
     {
         var selectedUnit = UnitService.Units.First(x => x.Id == selectedUnitId);
