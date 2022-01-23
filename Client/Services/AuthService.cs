@@ -25,5 +25,6 @@ namespace BlazorStack.Client.Services
 
             return await result.Content.ReadFromJsonAsync<ServiceResponse<int>>() ?? new ServiceResponse<int> { Success = false, Message="Error occured"};
         }
+
     }
 }
