@@ -4,6 +4,7 @@
 
 <h3>My Army</h3>
 
+
 @if(UnitService.Units.Count > 0)
 {
     <table class="table">
@@ -34,9 +35,10 @@ else
 }
 
 @code {
-        protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         await UnitService.LoadUnitsAsync();
+        await UnitService.LoadUserUnitsAsync();
     }
 
 }

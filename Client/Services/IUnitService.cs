@@ -7,9 +7,11 @@ namespace BlazorStack.Client.Services
     public interface IUnitService
     {
         IList<Unit> Units { get; set; }
-        IList<UserUnitModel> MyUnits { get; set; }
+        IList<UserUnit> MyUnits { get; set; }
 
-        void AddUnit(int unitId);
+        Task AddUnit(int unitId);
         Task LoadUnitsAsync();
+
+        Task LoadUserUnitsAsync();
     }
 }

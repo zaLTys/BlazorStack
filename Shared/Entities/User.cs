@@ -12,5 +12,6 @@
         public bool AcceptedTermsAgreements { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime RegisteredOn { get; set; } = DateTime.Now;
+        public List<UserUnit> Units { get; set; }
     }
 }

@@ -14,9 +14,10 @@ namespace BlazorStack.Client.Services
 
         public event Action OnChange;
 
-        public void AddPoints(int amount)
+        public async Task AddPoints(int amount)
         {
-            Points += amount;
+            var result = await _http.PutAsJsonAsync<int>("api/user/addpoints", amount);
+            Points = await result.Content.ReadFromJsonAsync<int>();
             PointsChanged();
         }
 

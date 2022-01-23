@@ -1,7 +1,5 @@
 ﻿using Blazored.Toast.Services;
-using BlazorStack.Shared;
 using BlazorStack.Shared.Entities;
-using BlazorStack.Shared.Models;
 using System.Net.Http.Json;
 
 namespace BlazorStack.Client.Services
@@ -10,30 +8,47 @@ namespace BlazorStack.Client.Services
     {
         private readonly IToastService _toastService;
         private readonly HttpClient _http;
+        private readonly IPointService _pointService;
 
         public IList<Unit> Units { get; set; } = new List<Unit>();
-        public IList<UserUnitModel> MyUnits { get; set; } = new List<UserUnitModel>();
+        public IList<UserUnit> MyUnits { get; set; } = new List<UserUnit>();
 
-        public UnitService(IToastService toastService, HttpClient http)
+        public UnitService(IToastService toastService, HttpClient http, IPointService pointService)
         {
             _toastService = toastService;
             _http = http;
+            _pointService = pointService;
         }
 
 
-        public void AddUnit(int unitId)
+        public async Task AddUnit(int unitId)
         {
             var unit = Units.First(unit => unit.Id == unitId);
-            MyUnits.Add(new UserUnitModel { UnitId = unit.Id, HitPoints = unit.HitPoints });
-            _toastService.ShowSuccess($"{unit.Title} built successfully", "Success!");
+            var result = await _http.PostAsJsonAsync<int>("api/userunit", unitId);
+            if(result.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                _toastService.ShowError(await result.Content.ReadAsStringAsync());
+            }
+            else
+            {
+                await _pointService.GetPoints();
+                _toastService.ShowSuccess($"{unit.Title} built successfully", "Success!");
+            }          
         }
 
         public async Task LoadUnitsAsync()
         {
             if (Units.Count == 0)
             {
-                Units = await _http.GetFromJsonAsync<IList<Unit>>("api/Unit") ?? new List<Unit>();
+                Units = await _http.GetFromJsonAsync<IList<Unit>>("api/unit");
             }
+        }
+
+        public async Task LoadUserUnitsAsync()
+        {
+            var units = await _http.GetFromJsonAsync<IList<UserUnit>>("api/userunit");
+
+            MyUnits = units;
         }
     }
 }

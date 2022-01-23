@@ -33,21 +33,9 @@
         await UnitService.LoadUnitsAsync();
     }
 
-    public void BuildUnit()
+    public async Task BuildUnit()
     {
-        var selectedUnit = UnitService.Units.First(x => x.Id == selectedUnitId);
-
-        if(PointService.Points < selectedUnit.PointCost)
-        {
-            needMorePoints = true;
-            ToastService.ShowError("Not enough points", "QQ");
-            return;
-        }
-
-        needMorePoints = false;
-
-        PointService.SpendPoints(selectedUnit.PointCost); 
-        UnitService.AddUnit(selectedUnitId);
+        await UnitService.AddUnit(selectedUnitId);
     }
 
 
