@@ -29,7 +29,7 @@ Please log in below or <a href="register">register</a>.
         var result = await AuthService.Login(user);
         if (result.Success)
         {
-            await LocalStorage.SetItemAsync<bool>("isAuthenticated", true); //later this will be a Token
+            await LocalStorage.SetItemAsync<string>("authToken", result.Data);
             await AuthenticationStateProvider.GetAuthenticationStateAsync();
         }
         else

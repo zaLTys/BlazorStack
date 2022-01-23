@@ -1,5 +1,7 @@
 ﻿using Blazored.LocalStorage;
+using BlazorStack.Client.Helpers;
 using Microsoft.AspNetCore.Components.Authorization;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace BlazorStack.Client
@@ -7,24 +9,29 @@ namespace BlazorStack.Client
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorageService;
+        private readonly HttpClient _http;
 
-        public CustomAuthenticationStateProvider(ILocalStorageService localStorageService)
+        public CustomAuthenticationStateProvider(ILocalStorageService localStorageService,
+            HttpClient http)
         {
             _localStorageService = localStorageService;
+            _http = http;
         }
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var state = new AuthenticationState(new ClaimsPrincipal());
+            var authToken = await _localStorageService.GetItemAsStringAsync("authToken");
 
-            if (await _localStorageService.GetItemAsync<bool>("isAuthenticated"))
+            var identity = new ClaimsIdentity();
+            _http.DefaultRequestHeaders.Authorization = null;
+
+            if (!string.IsNullOrEmpty(authToken))
             {
-                var identity = new ClaimsIdentity(new[] {
-                    new Claim(ClaimTypes.Name, "zaLTys")
-                }, "testAuthenticationType");
+                identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(authToken), "jwt");
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken)
+            };
 
-                var user = new ClaimsPrincipal(identity);
-                state = new AuthenticationState(user);
-            }
+            var user = new ClaimsPrincipal(identity);
+            var state = new AuthenticationState(user);
 
             NotifyAuthenticationStateChanged(Task.FromResult(state));
             return state;
