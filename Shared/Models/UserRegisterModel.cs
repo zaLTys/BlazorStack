@@ -8,7 +8,7 @@ namespace BlazorStack.Shared.Models
         public string Email { get; set; }
         [StringLength(16, ErrorMessage = "Username too long (16max)")]
         public string Username { get; set; }
-        public string Bio { get; set; }
+        public string Bio { get; set; } = string.Empty;
         [Required, StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
         [Compare("Password", ErrorMessage = "Passwords do not match")]

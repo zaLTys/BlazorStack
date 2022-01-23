@@ -16,7 +16,7 @@ namespace BlazorStack.Server.Controllers
             _authRepository = authRepository;
         }
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterModel request)
         {
             var response = await _authRepository.Register(new User
@@ -27,6 +27,17 @@ namespace BlazorStack.Server.Controllers
                 DateOfBirth = request.DateOfBirth,
                 AcceptedTermsAgreements = request.AcceptedTermsAgreements,
             }, request.Password);
+
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(UserLoginModel request)
+        {
+            var response = await _authRepository.Login(request.Email, request.Password);
 
             if (!response.Success)
                 return BadRequest(response);

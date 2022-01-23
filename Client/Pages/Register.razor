@@ -3,6 +3,8 @@
 @inject IUnitService UnitService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+@inject IToastService ToastService
 
 <h3>Register</h3>
 
@@ -36,19 +38,21 @@
         <label for="startUnit">StartUnit</label><br />
         <InputRadioGroup id="startUnit" @bind-Value="user.StartUnitId" class="form-control">
             @foreach (var unit in UnitService.Units)
-           {
-               <InputRadio Value="@unit.Id" /> <span style="padding-left: 5px;">@unit.Title</span><br />
-           }
+            {
+                <InputRadio Value="@unit.Id" /> <span style="padding-left: 5px;">@unit.Title</span>
+
+                <br />
+            }
         </InputRadioGroup>
     </div>
     <div class="form-group">
         <label for="points">Points</label>
-        <InputNumber id="email" @bind-Value="user.Points" class="form-control"></InputNumber>
+        <InputNumber id="points" @bind-Value="user.Points" class="form-control"></InputNumber>
         <ValidationMessage For="@(()=> user.Points)" />
     </div>
     <div class="form-group">
         <label for="dateOfBirth">DateOfBirth</label>
-        <InputDate id="email" @bind-Value="user.DateOfBirth" class="form-control"></InputDate>
+        <InputDate id="dateOfBirth" @bind-Value="user.DateOfBirth" class="form-control"></InputDate>
     </div>
     <div class="form-check">
         <InputCheckbox id="accepted" @bind-Value="user.AcceptedTermsAgreements" class="form-check-input"></InputCheckbox>
@@ -62,14 +66,25 @@
 @code {
     UserRegisterModel user = new UserRegisterModel();
 
-        protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         await UnitService.LoadUnitsAsync();
     }
 
-    void HandleRegistration()
+    async void HandleRegistration()
     {
-        JSRuntime.InvokeVoidAsync("console.log", "New user to be created:", user);
-        NavigationManager.NavigateTo("login");
+        //JAVASCRIPT for testing
+        await JSRuntime.InvokeVoidAsync("console.log", "New user to be created:", user);
+
+        var result = await AuthService.Register(user);
+        if (result.Success)
+        {
+            ToastService.ShowSuccess(result.Message);
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            ToastService.ShowError(result.Message);
+        }
     }
 }
