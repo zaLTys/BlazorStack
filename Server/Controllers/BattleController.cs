@@ -2,6 +2,7 @@
 using BlazorStack.Server.Services;
 using BlazorStack.Shared;
 using BlazorStack.Shared.Entities;
+using BlazorStack.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,7 @@ namespace BlazorStack.Server.Controllers
             }
 
             var result = new BattleResult();
-            await Fight(attacker, opponent, result)
+            await Fight(attacker, opponent, result);
 
             return Ok(result);
         }
@@ -122,7 +123,21 @@ namespace BlazorStack.Server.Controllers
                 opponent.Points += attackerDamageSum;
             }
 
+            StoreBattleHistory(attacker, opponent, result);
+
             await _context.SaveChangesAsync();
+        }
+
+        private void StoreBattleHistory(User attacker, User opponent, BattleResult result)
+        {
+            var battle = new Battle();
+            battle.Attacker = attacker; 
+            battle.Opponent = opponent;
+            battle.RoundsFought = result.RoundsFought;
+            battle.WinnerDamage = result.IsVictory? result.AttackerDamageSum: result.OpponentDamageSum;
+            battle.Winner = result.IsVictory ? attacker : opponent;
+
+            _context.Battles.Add(battle);
         }
     }
 }
