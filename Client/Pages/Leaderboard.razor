@@ -1,6 +1,10 @@
 ﻿@page "/leaderboard"
 @inject ILeaderboardService LeaderboardService
 @inject AuthenticationStateProvider AuthStateProvider
+@inject IBattleService BattleService
+@inject IPointService PointService
+@inject IToastService ToastService
+@inject NavigationManager NavigationManager
 
 <h3>Leaderboard</h3>
 
@@ -33,7 +37,7 @@ else
                     <td>
                         @if (entry.UserId != myUserId)
                         {
-                            <button class="btn btn-primary">Battle</button>
+                            <button class="btn btn-primary" @onclick="@(()=> StartBattle(entry.UserId))">Battle</button>
                         }
                     </td>
                 </tr>
@@ -59,5 +63,24 @@ else
             return "color: green; font-weight: 600;";
         else
             return "";
+    }
+
+    public async Task StartBattle(int opponentId)
+    {
+        Console.WriteLine($"Start battle with {opponentId}");
+        var result = await BattleService.StartBattle(opponentId);
+
+        if (result.RoundsFought <= 0)
+            ToastService.ShowInfo("Battle did not happen");
+        else if (result.IsVictory)
+            ToastService.ShowSuccess("You won the battle");
+        else
+            ToastService.ShowWarning("You lost the battle!");
+
+        await LeaderboardService.GetLeaderboard();
+        await PointService.GetPoints();
+
+        if (result.RoundsFought > 0)
+            NavigationManager.NavigateTo("battleLog");
     }
 }

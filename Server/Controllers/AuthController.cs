@@ -26,7 +26,7 @@ namespace BlazorStack.Server.Controllers
                 Points = request.Points,
                 DateOfBirth = request.DateOfBirth,
                 AcceptedTermsAgreements = request.AcceptedTermsAgreements,
-            }, request.Password);
+            }, request.Password, request.StartUnitId);
 
             if (!response.Success)
                 return BadRequest(response);

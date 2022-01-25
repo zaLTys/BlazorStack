@@ -40,7 +40,7 @@ namespace BlazorStack.Server.Data
             return response;
         }
 
-        public async Task<ServiceResponse<int>> Register(User user, string password)
+        public async Task<ServiceResponse<int>> Register(User user, string password, int startUnitId)
         {
             if (await UserExists(user.Email))
             {
@@ -54,7 +54,21 @@ namespace BlazorStack.Server.Data
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
+            await AddStartingUnit(user, startUnitId);
+
             return new ServiceResponse<int> { Data = user.Id, Message = "User created" };
+        }
+
+        private async Task AddStartingUnit(User user, int startUnitId)
+        {
+            var unit = await _context.Units.FirstOrDefaultAsync(x=> x.Id == startUnitId);
+            _context.UserUnits.Add(new UserUnit
+            {
+                UnitId = unit.Id,
+                UserId = user.Id,
+                HitPoints = unit.HitPoints
+            });
+            _context.SaveChangesAsync();
         }
 
         public async Task<bool> UserExists(string email)
