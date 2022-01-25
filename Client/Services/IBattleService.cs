@@ -6,5 +6,9 @@ namespace BlazorStack.Client.Services
     {
         Task<BattleResult> StartBattle(int opponentId);
         BattleResult LastBattle { get; set; }
+
+        IList<BattleHistoryEntry> History { get; set; }
+
+        Task GetHistory();
     }
 }

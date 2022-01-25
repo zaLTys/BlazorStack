@@ -1,5 +1,6 @@
 ﻿using BlazorStack.Server.Data;
 using BlazorStack.Server.Services;
+using BlazorStack.Shared;
 using BlazorStack.Shared.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -61,6 +62,32 @@ namespace BlazorStack.Server.Controllers
             });
 
             return Ok(response);
+        }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetHistory()
+        {
+            var user = await _utilityService.GetUser();
+            var battles = await _context.Battles.Where(x => x.AttackerId == user.Id || x.OpponentId == user.Id)
+                .Include(x => x.Attacker)
+                .Include(x => x.Opponent)
+                .Include(x => x.Winner)
+                .ToListAsync();
+
+            var history = battles.Select(x => new BattleHistoryEntry
+            {
+                BattleId = x.Id,
+                AttackerId = x.AttackerId,
+                OpponentId = x.OpponentId,
+                YouWon = x.WinnerId == user.Id,
+                AttackerName = x.Attacker.Username,
+                OpponentName = x.Opponent.Username,
+                RoundsFought = x.RoundsFought,
+                WinnerDamageDealt = x.WinnerDamage,
+                BattleDate = x.BattleDate,
+            });
+
+            return Ok(history.OrderByDescending(x => x.BattleDate));
         }
     }
 }
