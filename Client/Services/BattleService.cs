@@ -15,11 +15,6 @@ namespace BlazorStack.Client.Services
         public BattleResult LastBattle { get; set; }
         public IList<BattleHistoryEntry> History { get; set; } = new List<BattleHistoryEntry>();
 
-        public Task GetHistory()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<BattleResult> StartBattle(int opponentId)
         {
             var result = await _http.PostAsJsonAsync("api/battle", opponentId);
