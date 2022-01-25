@@ -13,5 +13,6 @@ namespace BlazorStack.Client.Services
         Task LoadUnitsAsync();
 
         Task LoadUserUnitsAsync();
+        Task ReviveArmy();
     }
 }

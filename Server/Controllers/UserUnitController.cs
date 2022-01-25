@@ -28,7 +28,7 @@ namespace BlazorStack.Server.Controllers
         {
             var unit = await _context.Units.FirstOrDefaultAsync(x => x.Id == unitId);
             var user = await _utilityService.GetUser();
-            if(user.Points < unit.PointCost)
+            if (user.Points < unit.PointCost)
             {
                 return BadRequest("NotEnoughPoints"); //ToDo: return serviceResponse
             }
@@ -51,7 +51,7 @@ namespace BlazorStack.Server.Controllers
         public async Task<IActionResult> GetUserUnits()
         {
             var user = await _utilityService.GetUser();
-            var userUnits = await _context.UserUnits.Where(x=> x.UserId == user.Id).ToListAsync();
+            var userUnits = await _context.UserUnits.Where(x => x.UserId == user.Id).ToListAsync();
 
             var response = userUnits.Select(x => new UserUnitResponse
             {
@@ -59,6 +59,42 @@ namespace BlazorStack.Server.Controllers
                 HitPoints = x.HitPoints,
             });
             return Ok(response);
+        }
+
+        [HttpPost("resurrect")]
+        public async Task<IActionResult> ResurrectArmy()
+        {
+            var user = await _utilityService.GetUser();
+            var userUnits = await _context.UserUnits
+                .Where(x=> x.UserId == user.Id)
+                .Include(u => u.Unit).ToListAsync();
+
+            int pointCost = 1000;
+
+            if(user.Points < pointCost)
+            {
+                return BadRequest("Not enough points to revive army");
+            }
+
+            var armyAlreadyAlive = true;
+            foreach (var userUnit in userUnits)
+            {
+                if(userUnit.HitPoints <= 0)
+                {
+                    armyAlreadyAlive = false;
+                    userUnit.HitPoints = new Random().Next(0,userUnit.Unit.HitPoints);
+                }
+
+            }
+
+            if (armyAlreadyAlive)
+                return Ok("Army is already alive");
+
+            user.Points -= pointCost;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Army revived");
         }
     }
 }

@@ -28,6 +28,9 @@
         </tr>
     }
     </table>
+    <center>
+        <button class="btn btn-warning" @onclick="Resurrect">Resurrect army (1000 points) </button>
+    </center>
 }
 else
 {
@@ -41,4 +44,8 @@ else
         await UnitService.LoadUserUnitsAsync();
     }
 
+    private async Task Resurrect()
+    {
+        await UnitService.ReviveArmy();
+    }
 }

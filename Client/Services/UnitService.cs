@@ -50,5 +50,21 @@ namespace BlazorStack.Client.Services
 
             MyUnits = units;
         }
+
+        public async Task ReviveArmy()
+        {
+            var result = await _http.PostAsJsonAsync<string>("api/userUnit/resurrect", null);
+            if(result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                _toastService.ShowSuccess(await result.Content.ReadAsStringAsync());
+            }
+            else
+            {
+                _toastService.ShowError(await result.Content.ReadAsStringAsync());
+            }
+
+            await LoadUserUnitsAsync();
+            await _pointService.GetPoints();
+        }
     }
 }
