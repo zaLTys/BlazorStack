@@ -9,7 +9,8 @@ namespace BlazorStack.Client.Pages
 
         private void IncrementCount()
         {
-            currentCount++;
+            currentCount++; //default
+            NotificationService.IncrementCounter(); //for service
         }
 
 
